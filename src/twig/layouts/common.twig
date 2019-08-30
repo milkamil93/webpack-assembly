@@ -1,0 +1,40 @@
+{# путь до шаблона от корня сайта #}
+{% set tplPath = '/' %}
+
+{# макрос для вставки svg из спрайта #}
+{% macro svg(id, classIn) %}
+    {% set className = classIn ? ' '~classIn : '' %}
+    <svg class="icon icon-{{ id~className }}">
+        <use xlink:href="{{ tplPath }}images/sprite.svg#sprite-{{ id }}" />
+    </svg>
+{% endmacro %}
+
+{% import _self as this %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="author" content="Программирование и верстка: @milkamil93.">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,maximum-scale=1,height=device-height,viewport-fit=cover">
+    <title>{% block title %}{% endblock %}</title>
+    <base href="/">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta property="og:title" content="{% block title %}{% endblock %}">
+    <meta property="og:description" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/">
+    <meta property="og:image" content="images/logo.png">
+    <meta name="theme-color" content="#fff">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header class="header"></header>
+    {% block content %}{% endblock %}
+    <div id="root"></div>
+    <footer class="footer"></footer>
+</body>
+</html>
