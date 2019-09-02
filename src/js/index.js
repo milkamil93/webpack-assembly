@@ -7,10 +7,12 @@ import '../scss/main.scss'
 import Inputmask from "inputmask";
 require('@fancyapps/fancybox');
 
+if (typeof window.componentName !== 'undefined') {
+    try {
+        require(`./components/${window.componentName}.component`);
+    } catch(e) {}
+}
+
 $(() => {
     Inputmask('+7 999 999-99-99').mask(document.querySelectorAll('[type="tel"]'));
 });
-
-import App from './components/app.component';
-
-render(<App />, document.getElementById('root'));
