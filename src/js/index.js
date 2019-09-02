@@ -1,9 +1,7 @@
-import Vue from 'vue'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import '../styl/main.styl';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '../scss/main.styl';
-import '../scss/main.scss';
 import Inputmask from 'inputmask';
 require('@fancyapps/fancybox');
 
