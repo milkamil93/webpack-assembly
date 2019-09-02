@@ -11,7 +11,8 @@ const
     OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin'), //  сжимает CSS в production
     ImageminPlugin = require('imagemin-webpack-plugin').default, // оптимизация изображений
     ImageminMozjpeg = require('imagemin-mozjpeg'), // плагин для оптимизатора изображений
-    SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin') // SVG спрайт
+    SVGSpritemapPlugin = require('svg-spritemap-webpack-plugin'), // SVG спрайт
+    VueLoaderPlugin = require('vue-loader/lib/plugin')
 ;
 
 module.exports = (env, argv) => {
@@ -36,6 +37,7 @@ module.exports = (env, argv) => {
         // сервер для разработки http://localhost:8080/
         devServer: {
             open: true,
+            overlay: true,
             compress: true,
             contentBase: DIST_PATH,
             watchContentBase: true
@@ -43,10 +45,6 @@ module.exports = (env, argv) => {
 
         optimization: {
             minimizer: [new TerserPlugin(), new OptimizeCssAssetsPlugin()],
-        },
-
-        resolve: {
-            extensions: ['.js','.jsx'],
         },
 
         module: {
@@ -69,30 +67,45 @@ module.exports = (env, argv) => {
 
                 // js обработка
                 {
-                    test: /\.(js|jsx)$/,
+                    test: /\.js$/,
                     exclude: /\.node_modules$/,
                     use: {
                         loader: 'babel-loader',
                         options: {
-                            presets: ['@babel/preset-env','@babel/preset-react'],
+                            presets: ['@babel/preset-env'],
                             env: {
-                                development : {
+                                development: {
                                     compact: false
                                 }
                             }
                         }
                     }
                 },
+                {
+                    test: /\.vue$/,
+                    loader: 'vue-loader'
+                },
 
                 // css обработка
                 {
-                    test: /\.(s[ac]ss|css)$/,
+                    test: /\.css$/,
                     use: [
+                        'vue-style-loader',
                         'style-loader',
                         MiniCssExtractPlugin.loader,
                         'css-loader',
                         'postcss-loader',
-                        'sass-loader'
+                    ]
+                },
+                {
+                    test: /\.styl$/,
+                    use: [
+                        'vue-style-loader',
+                        'style-loader',
+                        MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        'postcss-loader',
+                        'stylus-loader'
                     ]
                 },
 
@@ -105,6 +118,9 @@ module.exports = (env, argv) => {
         },
 
         plugins: [
+            // vue js
+            new VueLoaderPlugin(),
+
             // перекедыватель всяких файлов которые сами не умеют это делать (:
             new CopyPlugin([
                 { from: './src/images', to: 'images' }
@@ -172,8 +188,7 @@ module.exports = (env, argv) => {
             // SVG sprite
             new SVGSpritemapPlugin('src/svgSprite/*.svg', {
                 output: {
-                    filename: 'images/sprite.svg',
-                    svg4everybody: true
+                    filename: 'images/sprite.svg'
                 }
             })
 
