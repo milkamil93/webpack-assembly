@@ -3,7 +3,7 @@ import {render} from 'react-dom';
 import $ from 'jquery';
 window.jQuery = window.$ = $;
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '../scss/main.scss'
+import '../styl/main.styl'
 import Inputmask from "inputmask";
 require('@fancyapps/fancybox');
 

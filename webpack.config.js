@@ -36,6 +36,7 @@ module.exports = (env, argv) => {
         // сервер для разработки http://localhost:8080/
         devServer: {
             open: true,
+            overlay: true,
             compress: true,
             contentBase: DIST_PATH,
             watchContentBase: true
@@ -86,13 +87,22 @@ module.exports = (env, argv) => {
 
                 // css обработка
                 {
-                    test: /\.(s[ac]ss|css)$/,
+                    test: /\.css$/,
                     use: [
                         'style-loader',
                         MiniCssExtractPlugin.loader,
                         'css-loader',
                         'postcss-loader',
-                        'sass-loader'
+                    ]
+                },
+                {
+                    test: /\.styl$/,
+                    use: [
+                        'style-loader',
+                        MiniCssExtractPlugin.loader,
+                        'css-loader',
+                        'postcss-loader',
+                        'stylus-loader'
                     ]
                 },
 
@@ -172,8 +182,7 @@ module.exports = (env, argv) => {
             // SVG sprite
             new SVGSpritemapPlugin('src/svgSprite/*.svg', {
                 output: {
-                    filename: 'images/sprite.svg',
-                    svg4everybody: true
+                    filename: 'images/sprite.svg'
                 }
             })
 
