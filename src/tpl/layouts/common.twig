@@ -9,7 +9,9 @@
     </svg>
 {% endmacro %}
 
-{% import _self as this %}
+{% import _self as _self %}
+
+{% set title = title ?? 'Заголовок' %}
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -18,11 +20,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content="Программирование и верстка: @milkamil93.">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no,maximum-scale=1,height=device-height,viewport-fit=cover">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{{ title }}</title>
     <base href="/">
     <meta name="description" content="">
     <meta name="keywords" content="">
-    <meta property="og:title" content="{% block title %}{% endblock %}">
+    <meta property="og:title" content="{{ title }}">
     <meta property="og:description" content="">
     <meta property="og:type" content="website">
     <meta property="og:url" content="/">
@@ -32,9 +34,23 @@
     <link href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <header class="header"></header>
-    {% block content %}{% endblock %}
-    <div id="root"></div>
-    <footer class="footer"></footer>
+
+{% block header %}
+<header class="header">
+
+</header>
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+{% block footer %}
+<footer class="footer">
+
+</footer>
+{% endblock %}
+
+{% if componentName %}
+    <script>componentName = '{{ componentName }}';</script>
+{% endif %}
 </body>
 </html>

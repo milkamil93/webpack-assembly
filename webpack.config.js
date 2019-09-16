@@ -1,6 +1,5 @@
 const
     PATH = require('path'), // путь до корня
-    DIST_PATH = PATH.join(__dirname, 'dist'), // путь до собранных файлов
 
     glob = require('glob'), // получаем список файлов из дериктории
     CopyPlugin = require('copy-webpack-plugin'), // копирование файлов
@@ -19,12 +18,14 @@ module.exports = (env, argv) => {
     return {
         // точка входа
         entry: [
-            './src/js/index.js'
+            'webpack-dev-server/client?http://0.0.0.0:8080',
+            'webpack/hot/only-dev-server',
+            '@babel/polyfill',
+            './src/js/common.js'
         ],
 
         // точка выхода
         output: {
-            path: DIST_PATH,
             filename: './js/main.js'
         },
 
@@ -32,14 +33,15 @@ module.exports = (env, argv) => {
         mode: argv.mode || 'development',
 
         // режим генерации sourcemap
-        devtool: argv.mode === 'development' ? false : 'inline-source-map',
+        devtool: argv.mode === 'development' ? false : 'source-map',
 
         // сервер для разработки http://localhost:8080/
         devServer: {
-            open: true,
+            hot: true,
+            //open: true,
             overlay: true,
-            compress: true,
-            contentBase: DIST_PATH,
+            host: '0.0.0.0',
+            contentBase: argv.mode === 'production' ? PATH.join(__dirname, 'dist') : PATH.join(__dirname, 'src/twig'),
             watchContentBase: true
         },
 
@@ -90,29 +92,45 @@ module.exports = (env, argv) => {
                 {
                     test: /\.css$/,
                     use: [
-                        'vue-style-loader',
-                        'style-loader',
-                        MiniCssExtractPlugin.loader,
+                        'css-hot-loader',
+                        argv.mode !== 'production'
+                            ? 'vue-style-loader'
+                            : MiniCssExtractPlugin.loader,
                         'css-loader',
-                        'postcss-loader',
+                        'postcss-loader'
                     ]
                 },
                 {
-                    test: /\.styl$/,
+                    test: /\.styl(us)?$/,
                     use: [
-                        'vue-style-loader',
-                        'style-loader',
-                        MiniCssExtractPlugin.loader,
+                        'css-hot-loader',
+                        argv.mode !== 'production'
+                            ? 'vue-style-loader'
+                            : MiniCssExtractPlugin.loader,
                         'css-loader',
                         'postcss-loader',
-                        'stylus-loader'
+                        {
+                            loader: 'stylus-loader',
+                            options: {
+                                use: [require('nib')(),require('rupture')()],
+                                import: [
+                                    '~rupture/rupture/index.styl',
+                                    '~nib/lib/nib/index.styl',
+                                    PATH.join(__dirname, 'src/styl/mixins.styl')
+                                ]
+                            }
+                        }
                     ]
                 },
 
                 // обработка изображений
                 {
-                    test: /\.(jpe?g|png|svg)$/,
-                    use: ['file-loader']
+                    test: /\.(jpe?g|png|gif|svg|eot|ttf|woff|woff2)$/,
+                    loader: 'file-loader',
+                    options: {
+                        name: '[path][name].[ext]?[hash]',
+                        //publicPath: 'images/',
+                    }
                 }
             ]
         },
@@ -132,7 +150,7 @@ module.exports = (env, argv) => {
             }),
 
             // шаблонизация html
-            ...glob.sync('src/twig/*.twig')
+            ...glob.sync('src/tpl/*.twig')
                 .map(twig => {
                     return new HtmlWebpackPlugin({
                         filename: PATH.basename(twig,'.twig') + '.html',
@@ -143,7 +161,7 @@ module.exports = (env, argv) => {
                 config: {
                     html: {
                         preserve_newlines: false,
-                        unformatted: ['p','i','b','span','strong','a']
+                        unformatted: ['p','i','b','strong']
                     }
                 },
                 replace: [' type="text/javascript"']
@@ -188,7 +206,13 @@ module.exports = (env, argv) => {
             // SVG sprite
             new SVGSpritemapPlugin('src/svgSprite/*.svg', {
                 output: {
-                    filename: 'images/sprite.svg'
+                    filename: 'images/sprite.svg',
+                    svg4everybody: true
+                },
+                sprite: {
+                    generate: {
+                        title: false
+                    }
                 }
             })
 
