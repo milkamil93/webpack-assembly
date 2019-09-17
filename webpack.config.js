@@ -41,7 +41,7 @@ module.exports = (env, argv) => {
             //open: true,
             overlay: true,
             host: '0.0.0.0',
-            contentBase: argv.mode === 'production' ? PATH.join(__dirname, 'dist') : PATH.join(__dirname, 'src/twig'),
+            contentBase: argv.mode === 'production' ? PATH.join(__dirname, 'dist') : PATH.join(__dirname, 'src/tpl'),
             watchContentBase: true
         },
 

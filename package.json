@@ -20,6 +20,7 @@
     "copy-webpack-plugin": "^5.0.4",
     "css-hot-loader": "^1.4.4",
     "css-loader": "^3.2.0",
+    "file-loader": "^4.2.0",
     "glob": "^7.1.4",
     "html-beautify-webpack-plugin": "^1.0.5",
     "html-loader": "^0.5.5",
